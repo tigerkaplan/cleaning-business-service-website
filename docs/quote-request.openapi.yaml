@@ -1,0 +1,292 @@
+openapi: 3.1.1
+info:
+  title: Quote request API
+  version: 1.0.0
+  description: |
+    Public contract for submitting a Website quote request. A successful response
+    confirms receipt only; it does not confirm availability, pricing, or a booking.
+paths:
+  /api/quote-request:
+    post:
+      summary: Submit a quote request
+      operationId: submitQuoteRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteRequest'
+            examples:
+              standardRequest:
+                summary: Fictional Website quote request
+                value:
+                  name: Avery Morgan
+                  phone: '07700 900123'
+                  email: avery@example.test
+                  service_type: Domestic
+                  postcode: BN1 1AA
+                  property_type: Flat
+                  bedrooms: 2
+                  bathrooms: '1'
+                  preferred_date: '2026-08-15'
+                  urgency: Medium
+                  parking_access: Permit parking is available nearby.
+                  photo_url: https://images.example.test/quote-photo.jpg
+                  message: Please provide a quote for a regular clean.
+                  consent: true
+      responses:
+        '200':
+          description: The request was accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                accepted:
+                  value:
+                    ok: true
+        '400':
+          description: The request could not be read, was rejected, or failed validation.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/InvalidRequestResponse'
+                  - $ref: '#/components/schemas/SubmissionRejectedResponse'
+                  - $ref: '#/components/schemas/ValidationErrorResponse'
+              examples:
+                validationError:
+                  value:
+                    ok: false
+                    code: VALIDATION_ERROR
+                    message: Check the highlighted fields and try again.
+                    errors:
+                      postcode: Enter a valid UK postcode.
+        '429':
+          description: Too many requests were received from this client.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitedResponse'
+              examples:
+                rateLimited:
+                  value:
+                    ok: false
+                    code: RATE_LIMITED
+                    message: Too many requests. Please wait and try again.
+        '500':
+          description: The request could not be saved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersistenceErrorResponse'
+              examples:
+                persistenceError:
+                  value:
+                    ok: false
+                    code: PERSISTENCE_ERROR
+                    message: We could not save your request. Please try again later.
+        '503':
+          description: The quote request service is temporarily unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceUnavailableResponse'
+              examples:
+                unavailable:
+                  value:
+                    ok: false
+                    code: SERVICE_UNAVAILABLE
+                    message: The quote request service is temporarily unavailable. Please try again later.
+components:
+  schemas:
+    QuoteRequest:
+      type: object
+      required:
+        - name
+        - phone
+        - email
+        - service_type
+        - postcode
+        - consent
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 40
+          pattern: '^[+\\d][\\d\\s().-]*$'
+          description: Must contain at least seven digits.
+        email:
+          type: string
+          minLength: 1
+          maxLength: 160
+          pattern: '^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$'
+          description: Stored in lower case after trimming.
+        service_type:
+          type: string
+          enum:
+            - End of Tenancy
+            - Airbnb / Short-Let
+            - Office Cleaning
+            - Domestic
+            - Deep Clean
+            - Gym & Studio
+            - Other
+        postcode:
+          type: string
+          minLength: 1
+          maxLength: 12
+          pattern: '^(GIR ?0AA|[A-Z]{1,2}\\d[A-Z\\d]? ?\\d[A-Z]{2})$'
+          description: Validated as a UK postcode and stored in upper case after trimming.
+        property_type:
+          type:
+            - string
+            - 'null'
+          maxLength: 80
+        bedrooms:
+          $ref: '#/components/schemas/OptionalRoomCount'
+        bathrooms:
+          $ref: '#/components/schemas/OptionalRoomCount'
+        preferred_date:
+          type:
+            - string
+            - 'null'
+          maxLength: 30
+        urgency:
+          type: string
+          enum:
+            - High
+            - Medium
+            - Low
+          default: Medium
+          description: Defaults to Medium when omitted.
+        parking_access:
+          type:
+            - string
+            - 'null'
+          maxLength: 300
+        access_notes:
+          type:
+            - string
+            - 'null'
+          maxLength: 300
+          deprecated: true
+          description: Accepted legacy alias for parking_access.
+        photo_url:
+          type:
+            - string
+            - 'null'
+          maxLength: 500
+        photo_link:
+          type:
+            - string
+            - 'null'
+          maxLength: 500
+          deprecated: true
+          description: Accepted legacy alias for photo_url.
+        message:
+          type:
+            - string
+            - 'null'
+          maxLength: 1500
+        consent:
+          type: boolean
+          const: true
+        website:
+          type:
+            - string
+            - 'null'
+          writeOnly: true
+          description: Spam-protection field. It must be empty when supplied.
+    OptionalRoomCount:
+      anyOf:
+        - type: integer
+          minimum: 0
+          maximum: 8
+        - type: string
+          pattern: '^(?:0+|0*[1-8])$'
+        - type: 'null'
+    SuccessResponse:
+      type: object
+      required:
+        - ok
+      properties:
+        ok:
+          const: true
+    ErrorResponse:
+      type: object
+      required:
+        - ok
+        - code
+        - message
+      properties:
+        ok:
+          const: false
+        code:
+          type: string
+        message:
+          type: string
+    InvalidRequestResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            code:
+              const: INVALID_REQUEST
+            message:
+              const: We could not read the request. Please check the form and try again.
+    SubmissionRejectedResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            code:
+              const: SUBMISSION_REJECTED
+            message:
+              const: We could not accept this request.
+    ValidationErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          required:
+            - errors
+          properties:
+            code:
+              const: VALIDATION_ERROR
+            message:
+              const: Check the highlighted fields and try again.
+            errors:
+              type: object
+              additionalProperties:
+                type: string
+    RateLimitedResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            code:
+              const: RATE_LIMITED
+            message:
+              const: Too many requests. Please wait and try again.
+    PersistenceErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            code:
+              const: PERSISTENCE_ERROR
+            message:
+              const: We could not save your request. Please try again later.
+    ServiceUnavailableResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            code:
+              const: SERVICE_UNAVAILABLE
+            message:
+              const: The quote request service is temporarily unavailable. Please try again later.

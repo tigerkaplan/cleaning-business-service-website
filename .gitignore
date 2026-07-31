@@ -1,0 +1,29 @@
+# Dependencies and build output
+node_modules/
+.next/
+coverage/
+.nyc_output/
+.turbo/
+*.tsbuildinfo
+
+# Test output
+playwright-report/
+test-results/
+blob-report/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+
+# Local tooling and operating-system files
+.abacusai/
+.DS_Store
+Thumbs.db
+desktop.ini
