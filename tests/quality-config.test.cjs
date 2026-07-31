@@ -4,9 +4,8 @@ const { resolve } = require('node:path')
 const test = require('node:test')
 
 const websiteRoot = process.cwd()
-const projectRoot = resolve(websiteRoot, '..', '..')
 const openApiPath = resolve(websiteRoot, 'docs', 'quote-request.openapi.yaml')
-const workflowPath = resolve(projectRoot, '.github', 'workflows', 'website-quality.yml')
+const workflowPath = resolve(websiteRoot, '.github', 'workflows', 'quality.yml')
 
 function read(path) {
   return readFileSync(path, 'utf8')
@@ -49,22 +48,18 @@ test('quote-request OpenAPI source matches the implemented public contract', () 
   assert.doesNotMatch(document, /localhost|127\.0\.0\.1|SUPABASE_SERVICE_ROLE_KEY|service_role|Local App|automatic intake/i)
 })
 
-test('root Website quality workflow uses only verified commands', () => {
+test('Website quality workflow uses only verified commands', () => {
   const workflow = read(workflowPath)
 
   assert.match(workflow, /^name: Website quality$/m)
   assert.match(workflow, /^  push:$/m)
   assert.match(workflow, /^  pull_request:$/m)
-  assert.match(workflow, /'05_CODE_FOR_WEBSITE\/cleaning-website\/\*\*'/)
-  assert.match(workflow, /'\.github\/workflows\/website-quality\.yml'/)
   assert.match(workflow, /^permissions:\n  contents: read$/m)
   assert.match(workflow, /^    runs-on: ubuntu-latest$/m)
-  assert.match(workflow, /^        working-directory: 05_CODE_FOR_WEBSITE\/cleaning-website$/m)
-  assert.match(workflow, /actions\/checkout@v7/)
-  assert.match(workflow, /actions\/setup-node@v7/)
+  assert.match(workflow, /actions\/checkout@v4/)
+  assert.match(workflow, /actions\/setup-node@v4/)
   assert.match(workflow, /node-version: '22'/)
   assert.match(workflow, /cache: npm/)
-  assert.match(workflow, /cache-dependency-path: 05_CODE_FOR_WEBSITE\/cleaning-website\/package-lock\.json/)
 
   for (const command of ['npm ci', 'npm test', 'npm run typecheck', 'npm run build']) {
     assert.match(workflow, new RegExp(`- run: ${command.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`))
