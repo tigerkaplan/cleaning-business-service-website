@@ -1,6 +1,7 @@
+import { createPageMetadata } from '@/lib/seo'
+import { businessProfile } from '@/config/business'
 import { ServicePage } from '@/components/ServicePage'
 import { servicePages } from '@/content/services'
-import { createPageMetadata } from '@/lib/seo'
 
 const service = servicePages['deep-cleaning']
 

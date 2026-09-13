@@ -5,9 +5,11 @@ const root = process.cwd()
 const activeDirs = ['app', 'components', 'config', 'content', 'lib', 'types']
 const banned = [
   '[BRAND_NAME]',
-  '[PHONE]',
-  '[EMAIL]',
-  '[BRAND_DOMAIN]',
+  'BrightShore',
+  'TidyNest',
+  'BrightTidy',
+  'WellKept',
+  'CleanOS',
   '[WHATSAPP_NUMBER]',
   '[ICO REGISTRATION NUMBER]',
 ]
@@ -37,4 +39,4 @@ if (matches.length > 0) {
   console.error(matches.join('\n'))
   process.exit(1)
 }
-console.log('Placeholder scan passed.')
+console.log('Brand/obsolete-placeholder scan passed. Unresolved business placeholders are allowed for local preview; this is not a launch-readiness check.')

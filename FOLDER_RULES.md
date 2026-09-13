@@ -7,7 +7,7 @@ Allowed:
 - Next.js website app
 - Supabase schema/migration files for website lead capture
 - website code QA files
-- code-specific TODO / HANDOFF / DECISIONS_LOG
+- code-specific implementation documentation; active project controls remain in `01_WEBSITE/00_CONTROL`
 
 Not allowed:
 
@@ -36,10 +36,8 @@ types/
 
 ## Website design rules
 
-- Primary website colour is `#5B21B6` (BrightShore deep purple) — supersedes `#3A1078`.
-- Bright violet `#7C3AED` is a small-highlight/active-nav accent only, never a fill colour.
-- WhatsApp/action green is `#22C55E`.
-- Teal is no longer used.
+- Primary website colour is Brightshore teal `#0F766E`, with restrained green accents.
+- Preserve the approved local, practical Brighton & Hove design and copy.
 - Header must remain mobile-first.
 - Do not add navigation links to routes that do not exist.
 - Do not add a Blog link until a real blog route exists.

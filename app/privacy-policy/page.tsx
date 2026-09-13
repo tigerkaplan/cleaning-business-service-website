@@ -1,9 +1,9 @@
-import { businessProfile } from '@/config/business'
 import { createPageMetadata } from '@/lib/seo'
+import { businessProfile } from '@/config/business'
 
 export const metadata = createPageMetadata(
   'Privacy Policy',
-  'Read the BrightShore Cleaning privacy policy for quote requests, bookings and customer information.',
+  'Read the Brightshore privacy policy for quote requests, bookings and customer information.',
 )
 
 export default function PrivacyPolicyPage() {

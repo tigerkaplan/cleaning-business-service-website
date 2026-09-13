@@ -1,4 +1,4 @@
-# Cleaning Business Service Website
+# Brightshore Cleaning Website
 
 An accessible, mobile-first cleaning-service Website demonstration for visitors who need clear service information and a structured way to request a quote.
 
@@ -39,9 +39,20 @@ npm run test:e2e:chromium
 
 The browser checks use fictional mocked submissions and do not submit data to a live service.
 
+## Current working copy
+
+The Git-backed local runtime is `01_WEBSITE/cleaning-business-service-website-git`.
+The previous `01_WEBSITE/06_CODE` remains preserved. Project controls remain solely
+in `01_WEBSITE/00_CONTROL`.
+
+The homepage uses the seven supplied PNG assets in `public/images`, with responsive
+Next.js images and bottom-aligned service-card links.
+
 ## Current limitations
 
-- This repository does not represent a deployed service.
+- This repository does not represent a deployed service. Indexing remains disabled.
+- Phone, email, domain, privacy/ICO decisions and production intake acceptance remain unresolved.
+- GitHub intake types, validation and persistence are preserved; differences from the previous local intake require a separate reconciliation before using its earlier live acceptance evidence.
 - A verified public origin is still required before adding absolute canonical URLs, absolute sitemap or robots URLs, URL-based structured-data URLs, and social-sharing metadata.
 - Automated checks do not replace manual release accessibility checks, production form smoke testing, performance review or search-engine validation.
 - Only fictional or demo data belongs in demonstrations and tests.

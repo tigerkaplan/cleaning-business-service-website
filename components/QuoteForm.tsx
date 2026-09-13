@@ -85,7 +85,7 @@ const INITIAL: FormData = {
 type FieldErrors = Partial<Record<keyof FormData, string>>
 
 type ApiErrorBody = {
-  ok?: false
+  ok?: boolean
   code?: string
   message?: string
   errors?: Record<string, string>
@@ -211,6 +211,11 @@ export function QuoteForm() {
         return
       }
 
+      if (!body || body.ok !== true || Object.keys(body).length !== 1) {
+        setServerMessage('Your request was not confirmed. Your details are kept here. Please try again.')
+        setState('error')
+        return
+      }
       setForm(INITIAL)
       setState('success')
     } catch {

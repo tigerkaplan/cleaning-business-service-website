@@ -36,7 +36,7 @@ test('global metadata provides a title template, description, Open Graph, Twitte
   assert.match(layout, /applicationName: SITE_NAME/)
   assert.match(layout, /openGraph:\s*\{[\s\S]*type: 'website'/)
   assert.match(layout, /twitter:\s*\{[\s\S]*card: 'summary'/)
-  assert.match(layout, /robots:\s*\{[\s\S]*index: true,[\s\S]*follow: true/)
+  assert.match(layout, /robots:\s*\{[\s\S]*index: false,[\s\S]*follow: false/)
 })
 
 test('public route pages use shared unique title and description metadata', () => {
@@ -77,8 +77,7 @@ test('sitemap and robots routes are safe while the public origin is unresolved',
   assert.match(sitemap, /PUBLIC_ROUTE_PATHS\.flatMap/)
   assert.match(sitemap, /getPublicUrl\(route\)/)
   assert.doesNotMatch(sitemap, /lastModified|changeFrequency|priority/)
-  assert.match(robots, /allow: '\/'/)
-  assert.match(robots, /disallow: '\/api\/'/)
+  assert.match(robots, /disallow: '\/'/)
   assert.match(robots, /sitemap \? \{ sitemap \} : \{\}/)
   assert.doesNotMatch(robots, /(?:[A-Za-z]:\\|\/Users\/|localhost)/i)
   assert.doesNotMatch(publicSources, /(?:[A-Za-z]:\\|\/Users\/|private[-_]?path|internal[-_]?output)/i)
@@ -91,7 +90,7 @@ test('structured data is safely serialised and excludes unsupported business cla
 })
 
 test('social metadata does not claim an unverified social image or account', () => {
-  assert.ok(existsSync(join(websiteRoot, 'public', 'images', 'landing-page-office-cleaning-hero.svg')))
+  assert.ok(existsSync(join(websiteRoot, 'public', 'images', 'brightshore-cleaning-homepage-hero.png')))
   const socialMetadata = [seo, layout, ...pagePaths.map(read)].join('\n')
 
   assert.doesNotMatch(socialMetadata, /images:\s*\[|twitter:\s*\{[\s\S]*site:|creator:/)

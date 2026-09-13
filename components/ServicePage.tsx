@@ -6,7 +6,7 @@ function CheckList({ items }: { items: string[] }) {
     <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
       {items.map((item) => (
         <li key={item} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '15px', color: '#374151', lineHeight: 1.55 }}>
-          <span style={{ color: 'var(--brand-primary)', fontWeight: 700, flexShrink: 0, marginTop: '2px' }}>✓</span>
+          <span aria-hidden="true" style={{ color: 'var(--brand-primary)', fontWeight: 700, flexShrink: 0, marginTop: '2px' }}>✓</span>
           {item}
         </li>
       ))}
@@ -25,6 +25,8 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
         {service.opening}
       </p>
 
+      <p style={{ marginBottom: '2rem' }}><Link href="/contact" className="service-quote-link">Request a Quote</Link></p>
+
       <section style={{ marginBottom: '2.5rem' }}>
         <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--brand-primary)', marginBottom: '1rem' }}>What&apos;s included</h2>
         <CheckList items={service.included} />
@@ -35,17 +37,25 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
         <CheckList items={service.whoFor} />
       </section>
 
-      <section style={{ marginBottom: '2.5rem' }}>
-        <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--brand-primary)', marginBottom: '1rem' }}>Next step</h2>
-        <p style={{ fontSize: '15px', color: '#374151', lineHeight: 1.7, margin: 0 }}>
-          For pricing, availability and booking details, use the quote form, call or WhatsApp. Keep service pages short and move detailed questions to the main homepage FAQ.
-        </p>
+      <section style={{ marginBottom: '2rem' }}>
+        <h2 className="section-heading">Pricing note</h2>
+        <p>{service.pricingNote}</p>
+      </section>
+      <section style={{ marginBottom: '2rem' }}>
+        <h2 className="section-heading">How to book</h2>
+        <ol style={{ paddingLeft: '1.25rem', listStyle: 'decimal', lineHeight: 1.8 }}>
+          {service.howToBook.map(step => <li key={step}>{step}</li>)}
+        </ol>
+      </section>
+      <section className="service-faq" style={{ marginBottom: '2rem' }}>
+        <h2 className="section-heading">Frequently asked questions</h2>
+        {service.faqs.map(faq => <details key={faq.q}><summary>{faq.q}</summary><p style={{ paddingBottom: '1rem' }}>{faq.a}</p></details>)}
       </section>
 
-      <div style={{ backgroundColor: 'var(--brand-primary)', padding: '2.5rem', borderRadius: '12px', textAlign: 'center', marginBottom: '2rem' }}>
+      <div style={{ backgroundColor: 'var(--brand-primary)', padding: 'clamp(1.25rem, 5vw, 2.5rem)', borderRadius: '12px', textAlign: 'center', marginBottom: '2rem' }}>
         <h2 style={{ fontSize: '22px', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>Ready to get a quote?</h2>
-        <p style={{ color: '#DDD6FE', fontSize: '15px', marginBottom: '1.5rem' }}>Tell us about the property and we will get back to you promptly.</p>
-        <Link href="/contact" style={{ backgroundColor: '#fff', color: 'var(--brand-primary)', padding: '12px 28px', borderRadius: '8px', fontWeight: 700, fontSize: '15px', textDecoration: 'none' }}>
+        <p style={{ color: '#CCFBF1', fontSize: '15px', marginBottom: '1.5rem' }}>Tell us about the property and we will review your requirements.</p>
+        <Link href="/contact" className="service-quote-link" style={{ backgroundColor: '#fff', color: 'var(--brand-primary)', padding: '12px 28px', borderRadius: '8px', fontWeight: 700, fontSize: '15px', textDecoration: 'none' }}>
           Request a quote
         </Link>
       </div>
@@ -58,7 +68,7 @@ export function ServicePage({ service }: { service: ServicePageContent }) {
       </section>
 
       <section>
-        <p style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Internal links</p>
+        <p style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Related cleaning services</p>
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
           {service.internalLinks.map((item) => (
             <Link key={item.href} href={item.href} style={{ backgroundColor: 'var(--bg-soft)', color: 'var(--brand-primary)', padding: '8px 16px', borderRadius: '20px', fontSize: '14px', fontWeight: 500, textDecoration: 'none' }}>

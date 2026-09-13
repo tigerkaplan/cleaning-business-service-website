@@ -41,6 +41,8 @@ export function WhatsAppButton({
     >
       {/* Tooltip */}
       <div
+        id="whatsapp-tooltip"
+        aria-hidden={!tooltipVisible}
         role="tooltip"
         style={{
           backgroundColor: '#fff',
@@ -66,6 +68,7 @@ export function WhatsAppButton({
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat with us on WhatsApp"
+        aria-describedby={tooltipVisible ? 'whatsapp-tooltip' : undefined}
         onMouseEnter={() => setTooltipVisible(true)}
         onMouseLeave={() => setTooltipVisible(false)}
         onFocus={() => setTooltipVisible(true)}

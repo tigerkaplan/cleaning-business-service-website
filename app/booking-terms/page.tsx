@@ -1,9 +1,9 @@
-import { businessProfile } from '@/config/business'
 import { createPageMetadata } from '@/lib/seo'
+import { businessProfile } from '@/config/business'
 
 export const metadata = createPageMetadata(
   'Booking Terms',
-  'Booking terms for BrightShore Cleaning, including quote confirmation, scope, access and payment arrangements.',
+  'Booking terms for Brightshore, including quote confirmation, scope, access and payment arrangements.',
 )
 
 export default function BookingTermsPage() {

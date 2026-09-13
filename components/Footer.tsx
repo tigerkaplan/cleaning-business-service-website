@@ -21,21 +21,21 @@ const company = [
 
 export function Footer() {
   return (
-    <footer style={{ backgroundColor: 'var(--brand-primary-dark)', color: '#E9D5FF' }}>
+    <footer style={{ backgroundColor: 'var(--brand-primary-dark)', color: '#CCFBF1' }}>
       <div style={{ maxWidth: '1152px', margin: '0 auto', padding: '3rem 1.5rem 2rem' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2.5rem', marginBottom: '2.5rem' }}>
           <div>
             <p style={{ fontWeight: 700, fontSize: '18px', color: '#fff', marginBottom: '0.5rem' }}>{businessProfile.tradingName}</p>
-            <p style={{ fontSize: '14px', color: '#C4B5FD', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '14px', color: '#99F6E4', lineHeight: 1.6 }}>
               Professional cleaning services for offices, homes and local spaces. Reliable, trusted and local.
             </p>
-            <p style={{ fontSize: '13px', color: '#DDD6FE', marginTop: '1rem' }}>
-              <a href={`tel:${businessProfile.phone.replace(/\s+/g, '')}`} style={{ color: '#DDD6FE', textDecoration: 'none' }}>
+            <p style={{ fontSize: '13px', color: '#CCFBF1', marginTop: '1rem' }}>
+              <a href={businessProfile.phoneHref} style={{ color: '#CCFBF1', textDecoration: 'none' }}>
                 {businessProfile.phone}
               </a>
             </p>
-            <p style={{ fontSize: '13px', color: '#DDD6FE' }}>
-              <a href={`mailto:${businessProfile.email}`} style={{ color: '#DDD6FE', textDecoration: 'none' }}>
+            <p style={{ fontSize: '13px', color: '#CCFBF1' }}>
+              <a href={businessProfile.emailHref} style={{ color: '#CCFBF1', textDecoration: 'none' }}>
                 {businessProfile.email}
               </a>
             </p>
@@ -46,7 +46,7 @@ export function Footer() {
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {services.map((s) => (
                 <li key={s.href}>
-                  <Link href={s.href} style={{ fontSize: '14px', color: '#C4B5FD', textDecoration: 'none' }}>
+                  <Link href={s.href} style={{ fontSize: '14px', color: '#99F6E4', textDecoration: 'none' }}>
                     {s.label}
                   </Link>
                 </li>
@@ -59,7 +59,7 @@ export function Footer() {
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {company.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} style={{ fontSize: '14px', color: '#C4B5FD', textDecoration: 'none' }}>
+                  <Link href={l.href} style={{ fontSize: '14px', color: '#99F6E4', textDecoration: 'none' }}>
                     {l.label}
                   </Link>
                 </li>
@@ -68,11 +68,11 @@ export function Footer() {
           </div>
         </div>
 
-        <div style={{ borderTop: '1px solid #5B21B6', paddingTop: '1.5rem', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <p style={{ fontSize: '13px', color: '#C4B5FD' }}>
+        <div style={{ borderTop: '1px solid #0F766E', paddingTop: '1.5rem', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <p style={{ fontSize: '13px', color: '#99F6E4' }}>
             &copy; {new Date().getFullYear()} {businessProfile.tradingName}. Brighton &amp; Hove.
           </p>
-          <p style={{ fontSize: '13px', color: '#C4B5FD' }}>
+          <p style={{ fontSize: '13px', color: '#99F6E4' }}>
             Serving BN1, BN2, BN3 and surrounding areas.
           </p>
         </div>

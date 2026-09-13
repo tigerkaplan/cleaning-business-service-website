@@ -1,50 +1,63 @@
-import Link from 'next/link'
-import { businessProfile } from '@/config/business'
 import { createPageMetadata } from '@/lib/seo'
+import Link from 'next/link'
+import Image from 'next/image'
+import { businessProfile } from '@/config/business'
 
 export const metadata = createPageMetadata(
-  'Cleaning services for offices, homes and local spaces',
-  'BrightShore Cleaning provides cleaning for offices, gyms, studios, landlords, short-let hosts and local organisations in Brighton & Hove. Request a quote with your property details.',
+  'Professional Cleaning in Brighton & Hove',
+  'Brightshore provides cleaning for offices, gyms, studios, landlords, short-let hosts and local organisations in Brighton & Hove. Request a quote with your property details.',
 )
 
 type ServiceIconName = 'home' | 'bed' | 'building' | 'fitness' | 'clinic' | 'spray'
 
-const services: Array<{ title: string; href: string; desc: string; icon: ServiceIconName }> = [
+const services: Array<{ title: string; href: string; desc: string; icon: ServiceIconName; image: string; alt: string }> = [
   {
     title: 'End-of-Tenancy Cleaning',
     href: '/end-of-tenancy-cleaning',
     desc: 'Move-out cleans that help secure your deposit.',
     icon: 'home',
+    image: '/images/end-of-tenancy-cleaning.png',
+    alt: 'End-of-tenancy cleaning in an empty home',
   },
   {
     title: 'Airbnb & Short-Let Cleaning',
     href: '/airbnb-cleaning',
     desc: 'Fast, reliable turnarounds for happy guests.',
     icon: 'bed',
+    image: '/images/airbnb-short-let-cleaning.png',
+    alt: 'Cleaner preparing a short-let bedroom',
   },
   {
     title: 'Office & Commercial Cleaning',
     href: '/office-cleaning',
     desc: 'Clean, professional spaces for your team and clients.',
     icon: 'building',
+    image: '/images/office-commercial-cleaning.png',
+    alt: 'Cleaner mopping an office reception',
   },
   {
     title: 'Gyms & Studios',
     href: '/gym-studio-cleaning',
     desc: 'Hygienic cleaning for gyms, fitness and wellness spaces.',
     icon: 'fitness',
+    image: '/images/gym-studio-cleaning.png',
+    alt: 'Cleaner wiping a gym training bench',
   },
   {
     title: 'Clinics & Local Organisations',
     href: '/office-cleaning',
     desc: 'Clean and safe environments you can trust.',
     icon: 'clinic',
+    image: '/images/clinic-local-organisation-cleaning.png',
+    alt: 'Cleaner wiping a clinic reception desk',
   },
   {
     title: 'Domestic & Deep Cleaning',
     href: '/deep-cleaning',
     desc: 'Regular or deep cleans for homes that deserve it.',
     icon: 'spray',
+    image: '/images/domestic-deep-cleaning.png',
+    alt: 'Cleaners vacuuming and cleaning a home',
   },
 ]
 
@@ -118,7 +131,7 @@ function ServiceIcon({ name }: { name: ServiceIconName }) {
 }
 
 const trustPoints = [
-  { title: 'Fully insured', desc: 'Your property is in safe hands.' },
+  { title: 'Agreed cleaning scope', desc: 'Know what your quote includes.' },
   { title: 'Reliable & local team', desc: 'Brighton based, customer focused.' },
   { title: 'High standards', desc: 'We care about the details.' },
   { title: 'Flexible booking', desc: 'We work around your schedule.' },
@@ -144,11 +157,11 @@ const areas = ['Brighton', 'Hove', 'Kemptown', 'Preston Park', 'Portslade', 'Fiv
 const homeFaqs = [
   {
     q: 'How do I get a cleaning quote?',
-    a: 'Use the quote form, call, or WhatsApp. Send the service type, postcode, property size, preferred date and photos where possible.',
+    a: 'Use the quote form to send the service type, postcode, property size, preferred date and optional photos.',
   },
   {
     q: 'Can I call or WhatsApp instead of filling in the form?',
-    a: 'Yes. For urgent or simple enquiries, call or WhatsApp first. For accurate pricing, we may still ask for photos and key property details.',
+    a: 'Use the contact details shown when available, or send the quote form. For accurate pricing, we may still ask for photos and key property details.',
   },
   {
     q: 'Do you need photos before quoting?',
@@ -156,7 +169,7 @@ const homeFaqs = [
   },
   {
     q: 'Do you clean offices, gyms, studios and local organisations?',
-    a: 'Yes. The website is designed for local homes, offices, gyms, studios, landlords, short-let hosts, clinics and small organisations.',
+    a: 'Yes. We clean local homes, offices, gyms, studios, landlords, short-let hosts, non-clinical clinic areas and small organisations.',
   },
   {
     q: 'Can you clean outside normal opening hours?',
@@ -172,13 +185,13 @@ const homeFaqs = [
   },
   {
     q: 'What happens after I send a request?',
-    a: 'We check the details, ask any missing questions, confirm availability and send the next step. A customer record is not created until a quote is accepted.',
+    a: 'We check the details, ask any missing questions, confirm availability and send the next step. You can review the quote before agreeing a booking.',
   },
 ]
 
 export default function HomePage() {
-  const telHref = `tel:${businessProfile.phone.replace(/\s+/g, '')}`
-  const waHref = `https://wa.me/${businessProfile.whatsappNumber}`
+  const telHref = businessProfile.phoneHref
+  const waHref = businessProfile.whatsappHref
 
   return (
     <>
@@ -186,40 +199,43 @@ export default function HomePage() {
       <section className="home-hero">
         <div className="home-hero__inner">
           <div className="home-hero__copy">
-            <p className="home-hero__eyebrow">Reliable. Trusted. Professional.</p>
+            <p className="home-hero__eyebrow">Brightshore &middot; Brighton &amp; Hove</p>
             <h1 className="home-hero__title">
-              Cleaning services for <span>offices, homes and local spaces</span>
+              Professional cleaning <span>in Brighton &amp; Hove</span>
             </h1>
             <p className="home-hero__subtitle">
-              Reliable cleaning for offices, gyms, studios, landlords, short-let hosts and local organisations.
+              For homes, workplaces and short-let properties.
             </p>
 
             <div className="home-hero__actions" aria-label="Main contact actions">
               <Link href="/contact" className="home-hero__button home-hero__button--primary">
                 Request a Quote <span aria-hidden="true">→</span>
               </Link>
-              <a href={telHref} className="home-hero__button home-hero__button--secondary">
+              {telHref && <a href={telHref} className="home-hero__button home-hero__button--secondary">
                 Call {businessProfile.phone}
-              </a>
-              <a href={waHref} target="_blank" rel="noopener noreferrer" className="home-hero__button home-hero__button--secondary home-hero__button--whatsapp">
+              </a>}
+              {waHref && <a href={waHref} target="_blank" rel="noopener noreferrer" className="home-hero__button home-hero__button--secondary home-hero__button--whatsapp">
                 WhatsApp Us
-              </a>
+              </a>}
             </div>
           </div>
 
           <div className="home-hero__image-wrap" aria-label="Clean office hero image">
-            <img
+            <Image
+              width={1672} height={940}
+              priority
+              sizes="(min-width: 980px) 620px, 100vw"
               className="home-hero__image"
-              src="/images/landing-page-office-cleaning-hero.svg"
-              alt="Bright modern office with desks, plants and a purple feature wall"
+              src="/images/brightshore-cleaning-homepage-hero.png"
+              alt="Professional cleaners preparing a bright workspace in Brighton and Hove"
             />
-            <div className="home-hero__call-card" aria-label="Call for a cleaning quote">
+            {telHref && <div className="home-hero__call-card" aria-label="Call for a cleaning quote">
               <span aria-hidden="true">☎</span>
               <div>
                 <strong>Call for a quote</strong>
                 <a href={telHref}>{businessProfile.phone}</a>
               </div>
-            </div>
+            </div>}
           </div>
         </div>
       </section>
@@ -247,6 +263,7 @@ export default function HomePage() {
           <div className="services-grid">
             {services.map((s) => (
               <Link key={s.title} href={s.href} className="service-card">
+                <Image src={s.image} alt={s.alt} width={600} height={400} sizes="(min-width: 980px) 190px, (min-width: 640px) 45vw, 100vw" className="service-card__image" />
                 <div className="service-card__icon">
                   <ServiceIcon name={s.icon} />
                 </div>
@@ -322,7 +339,7 @@ export default function HomePage() {
             <h2>Tell us what you need cleaned</h2>
             <p>Send a few details and we will come back with the next step.</p>
             <ul>
-              <li>Quick response</li>
+              <li>Clear next steps</li>
               <li>No obligation</li>
               <li>Transparent pricing</li>
             </ul>
@@ -331,7 +348,7 @@ export default function HomePage() {
             <h3>Request a cleaning quote</h3>
             <p>The more details you share, the more accurate we can be.</p>
             <Link href="/contact" className="home-hero__button home-hero__button--primary">Request a Quote →</Link>
-            <a href={waHref} target="_blank" rel="noopener noreferrer" className="home-hero__button home-hero__button--secondary home-hero__button--whatsapp">WhatsApp Us</a>
+            {waHref && <a href={waHref} target="_blank" rel="noopener noreferrer" className="home-hero__button home-hero__button--secondary home-hero__button--whatsapp">WhatsApp Us</a>}
           </div>
         </div>
       </section>

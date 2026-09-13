@@ -1,10 +1,10 @@
+import { createPageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { businessProfile } from '@/config/business'
-import { createPageMetadata } from '@/lib/seo'
 
 export const metadata = createPageMetadata(
   'Customer Reviews',
-  'Customer reviews for BrightShore Cleaning. Reviews will be shown only when genuine customer feedback is available.',
+  'Customer reviews for Brightshore. Reviews will be shown only when genuine customer feedback is available.',
 )
 
 export default function ReviewsPage() {

@@ -9,8 +9,8 @@ const header = fs.readFileSync(path.join(root, 'components/Header.tsx'), 'utf8')
 const stickyBar = fs.readFileSync(path.join(root, 'components/StickyMobileBar.tsx'), 'utf8')
 const home = fs.readFileSync(path.join(root, 'app/page.tsx'), 'utf8')
 
-test('design system uses BrightShore purple (#5B21B6) as the primary colour', () => {
-  assert.match(globals, /--brand-primary:\s*#5B21B6;/)
+test('design system uses Brightshore teal (#0F766E) as the primary colour', () => {
+  assert.match(globals, /--brand-primary:\s*#0F766E;/)
   assert.match(globals, /var\(--brand-primary\)/)
 })
 
@@ -33,7 +33,7 @@ test('navbar is sticky so phone, WhatsApp and quote access stay reachable', () =
   assert.match(globals, /\.site-header\s*\{[\s\S]*z-index:\s*9990;/)
 })
 
-test('header includes the required BrightShore nav and avoids shouting the location above the fold', () => {
+test('header includes the required Brightshore nav and identifies the service area', () => {
   assert.match(header, /Home/)
   assert.match(header, /Services/)
   assert.match(header, /About Us/)
@@ -41,7 +41,7 @@ test('header includes the required BrightShore nav and avoids shouting the locat
   assert.match(header, /Booking Terms/)
   assert.match(header, /Contact/)
   assert.match(header, /top-contact-strip/)
-  assert.match(header, /Mon – Sat/)
+  assert.match(header, /Brighton &amp; Hove/)
   assert.doesNotMatch(header, /Serving Brighton/)
   assert.doesNotMatch(header, /service-area-strip/)
 })
@@ -68,9 +68,9 @@ test('homepage hero leads with Request a Quote, Call Now and WhatsApp in that or
 
 
 test('homepage uses the mobile-first service-led H1 and a real landing hero image asset', () => {
-  assert.match(home, /Cleaning services for/)
-  assert.match(home, /offices, homes and local spaces/)
-  assert.match(home, /landing-page-office-cleaning-hero\.svg/)
+  assert.match(home, /Professional cleaning/)
+  assert.match(home, /in Brighton &amp; Hove/)
+  assert.match(home, /brightshore-cleaning-homepage-hero\.png/)
   assert.doesNotMatch(home, /Serving Brighton &amp; Hove and nearby areas/)
 })
 
@@ -88,19 +88,19 @@ test('homepage service cards use polished mobile-first card structure and inline
   assert.match(home, /className="service-card__cta"/)
   assert.match(globals, /\.service-card\s*\{[\s\S]*grid-template-columns:\s*60px minmax\(0, 1fr\);/)
   assert.match(globals, /\.service-card\s*\{[\s\S]*border-radius:\s*1\.4rem;/)
-  assert.match(globals, /\.service-card__icon\s*\{[\s\S]*linear-gradient\(135deg, #F3E8FF 0%, #FFFFFF 100%\)/)
+  assert.match(globals, /\.service-card__icon\s*\{[\s\S]*linear-gradient\(135deg, #E6F5F2 0%, #FFFFFF 100%\)/)
   assert.match(globals, /\.service-card__cta\s*\{[\s\S]*border-radius:\s*999px;/)
 })
 
-test('homepage how-it-works section uses the light landing-page background and purple three-card pattern', () => {
+test('homepage how-it-works section uses the light landing-page background and teal three-card pattern', () => {
   assert.match(home, /how-it-works__kicker">Booking/)
   assert.match(home, /How It Works/)
   assert.match(home, /Send your request/)
   assert.match(home, /Get a clear quote/)
   assert.match(home, /Confirm your booking/)
-  assert.match(globals, /\.how-it-works\s*\{[\s\S]*linear-gradient\(120deg, #FFFFFF 0%, #FAF8FF 55%, #F3E8FF 100%\)/)
+  assert.match(globals, /\.how-it-works\s*\{[\s\S]*linear-gradient\(120deg, #FFFFFF 0%, #F5FAF9 55%, #E6F5F2 100%\)/)
   assert.match(globals, /\.step-item\s*\{[\s\S]*background:\s*#fff;/)
-  assert.match(globals, /\.step-item__number\s*\{[\s\S]*background:\s*#F3E8FF;/)
+  assert.match(globals, /\.step-item__number\s*\{[\s\S]*background:\s*#E6F5F2;/)
   assert.match(globals, /\.steps-list\s*\{[\s\S]*display:\s*grid;/)
   assert.doesNotMatch(globals, /#2DD4BF/)
   assert.doesNotMatch(globals, /\.step-item\s*\{[\s\S]*background:\s*rgba\(255, 255, 255, 0\.1\);/)
@@ -121,13 +121,9 @@ test('homepage includes a mobile-first FAQ section before the final quote CTA', 
 })
 
 
-test('service pages are shortened by removing rendered pricing, how-to-book and service FAQ blocks', () => {
+test('service pages present existing pricing, booking and FAQ details with a quote action', () => {
   const servicePage = fs.readFileSync(path.join(root, 'components/ServicePage.tsx'), 'utf8')
-  assert.doesNotMatch(servicePage, /Pricing note/)
-  assert.doesNotMatch(servicePage, /How to book/)
-  assert.doesNotMatch(servicePage, /<h2[^>]*>FAQ<\/h2>/)
-  assert.doesNotMatch(servicePage, /service\.pricingNote/)
-  assert.doesNotMatch(servicePage, /service\.howToBook\.map/)
-  assert.doesNotMatch(servicePage, /service\.faqs\.map/)
-  assert.match(servicePage, /Next step/)
+  for (const field of ['service.pricingNote', 'service.howToBook.map', 'service.faqs.map']) assert.ok(servicePage.includes(field))
+  assert.match(servicePage, /Request a Quote/)
+  assert.doesNotMatch(servicePage, /Keep service pages short|Internal links/)
 })

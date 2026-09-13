@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-export const SITE_NAME = 'BrightShore Cleaning'
+export const SITE_NAME = 'Brightshore Cleaning'
 export const SITE_DESCRIPTION =
   'Cleaning services for offices, homes and local spaces in Brighton & Hove. Request a quote with your property details.'
 
@@ -30,17 +30,17 @@ export function getPublicUrl(path: string) {
 
 export function createPageMetadata(title: string, description: string): Metadata {
   return {
-    title,
+    title: { absolute: `${title} | ${SITE_NAME}` },
     description,
     openGraph: {
       type: 'website',
       siteName: SITE_NAME,
-      title,
+      title: `${title} | ${SITE_NAME}`,
       description,
     },
     twitter: {
       card: 'summary',
-      title,
+      title: `${title} | ${SITE_NAME}`,
       description,
     },
   }

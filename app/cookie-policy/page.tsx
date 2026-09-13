@@ -1,9 +1,9 @@
-import { businessProfile } from '@/config/business'
 import { createPageMetadata } from '@/lib/seo'
+import { businessProfile } from '@/config/business'
 
 export const metadata = createPageMetadata(
   'Cookie Policy',
-  'Read the BrightShore Cleaning cookie policy and how essential cookies support the Website.',
+  'Read the Brightshore cookie policy and how essential cookies support the Website.',
 )
 
 export default function CookiePolicyPage() {
@@ -22,7 +22,7 @@ export default function CookiePolicyPage() {
         </p>
         <p style={{ fontSize: '15px', color: '#374151', lineHeight: 1.7 }}>
           You can control or delete cookies through your browser settings. For questions about this Cookie Policy, contact{' '}
-          <a href={`mailto:${businessProfile.email}`} style={{ color: 'var(--brand-primary)' }}>{businessProfile.email}</a>.
+          <a href={businessProfile.emailHref} style={{ color: 'var(--brand-primary)' }}>{businessProfile.email}</a>.
         </p>
       </div>
     </div>

@@ -12,10 +12,10 @@ export function buildMetadata({
   description: string
 }): Metadata {
   return {
-    title: `${title} | ${businessProfile.tradingName}`,
+    title: { absolute: `${title} | ${businessProfile.seoName}` },
     description,
     openGraph: {
-      title: `${title} | ${businessProfile.tradingName}`,
+      title: `${title} | ${businessProfile.seoName}`,
       description,
       locale: 'en_GB',
       type: 'website',

@@ -127,6 +127,15 @@ test('fictional successful submission is mocked and restores focus predictably',
   await expect(page.getByLabel('Full name')).toHaveValue('')
 })
 
+test('unconfirmed successful HTTP response preserves the enquiry', async ({ page }) => {
+  await page.route('**/api/quote-request', route => route.fulfill({ status: 200, contentType: 'application/json', body: '{}' }))
+  await openContact(page)
+  await completeRequiredFields(page)
+  await page.getByRole('button', { name: 'Send quote request' }).click()
+  await expect(page.getByText(/Your request was not confirmed/)).toBeVisible()
+  await expect(page.getByLabel('Full name')).toHaveValue('Example Browser Test')
+})
+
 test('keyboard operation reaches urgency controls and the submit button', async ({ page }) => {
   await openContact(page)
 

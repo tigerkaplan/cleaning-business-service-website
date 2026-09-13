@@ -10,7 +10,7 @@ import { SITE_DESCRIPTION, SITE_NAME } from '@/lib/seo'
 
 export const metadata: Metadata = {
   title: {
-    default: `Cleaning services for offices, homes and local spaces | ${SITE_NAME}`,
+    default: `Professional Cleaning in Brighton & Hove | ${SITE_NAME}`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -18,17 +18,17 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     siteName: SITE_NAME,
-    title: `Cleaning services for offices, homes and local spaces | ${SITE_NAME}`,
+    title: `Professional Cleaning in Brighton & Hove | ${SITE_NAME}`,
     description: SITE_DESCRIPTION,
   },
   twitter: {
     card: 'summary',
-    title: `Cleaning services for offices, homes and local spaces | ${SITE_NAME}`,
+    title: `Professional Cleaning in Brighton & Hove | ${SITE_NAME}`,
     description: SITE_DESCRIPTION,
   },
   robots: {
-    index: true,
-    follow: true,
+    index: false,
+    follow: false,
   },
 }
 
@@ -36,12 +36,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
+        <a className="skip-link" href="#main-content">Skip to main content</a>
         <WebsiteStructuredData />
         <Header />
-        <main>{children}</main>
+        <main id="main-content" tabIndex={-1}>{children}</main>
         <Footer />
         <div className="sticky-bar-spacer" aria-hidden="true" />
-        <WhatsAppButton phoneNumber={businessProfile.whatsappNumber} />
+        {businessProfile.whatsappHref && <WhatsAppButton phoneNumber={businessProfile.whatsappNumber} />}
         <StickyMobileBar />
       </body>
     </html>

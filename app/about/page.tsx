@@ -1,10 +1,10 @@
+import { createPageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 import { businessProfile } from '@/config/business'
-import { createPageMetadata } from '@/lib/seo'
 
 export const metadata = createPageMetadata(
-  'About BrightShore Cleaning',
-  'Learn about BrightShore Cleaning, a Brighton & Hove cleaning service for homes, rentals, short-let properties and small businesses.',
+  'About Brightshore',
+  'Learn about Brightshore, a Brighton & Hove cleaning service for homes, rentals, short-let properties and small businesses.',
 )
 
 export default function AboutPage() {

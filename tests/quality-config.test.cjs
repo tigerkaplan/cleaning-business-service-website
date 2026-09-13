@@ -8,7 +8,7 @@ const openApiPath = resolve(websiteRoot, 'docs', 'quote-request.openapi.yaml')
 const workflowPath = resolve(websiteRoot, '.github', 'workflows', 'quality.yml')
 
 function read(path) {
-  return readFileSync(path, 'utf8')
+  return readFileSync(path, 'utf8').replace(/\r\n/g, '\n')
 }
 
 test('quote-request OpenAPI source matches the implemented public contract', () => {

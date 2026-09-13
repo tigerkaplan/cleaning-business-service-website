@@ -1,39 +1,35 @@
-const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || ''
-const rawDomain = process.env.NEXT_PUBLIC_SITE_DOMAIN?.trim() || ''
-const rawBusinessName = process.env.NEXT_PUBLIC_BUSINESS_NAME?.trim() || 'BrightShore'
-const rawTradingName = process.env.NEXT_PUBLIC_TRADING_NAME?.trim() || `${rawBusinessName} Cleaning`
-
-function normaliseDomain(domain: string) {
-  return domain.replace(/^https?:\/\//, '').replace(/\/$/, '')
+// Owner-confirmed brand; historical environment names cannot override it.
+const brand = 'Brightshore'
+const unresolved = (value: string) => !value || /\[|\]|TBC|TBD|example\.|localhost|0{6}|447700000000/i.test(value)
+function publicSiteUrl(value: string) {
+  if (unresolved(value)) return undefined
+  try {
+    const url = new URL(value.includes('://') ? value : `https://${value}`)
+    if (url.protocol !== 'https:' || url.username || url.password || !url.hostname.includes('.') || /^\d[\d.]+$/.test(url.hostname)) return undefined
+    return url.origin
+  } catch { return undefined }
 }
-
-function normaliseSiteUrl(value: string, domain: string) {
-  if (value) return value.replace(/\/$/, '')
-  const cleanedDomain = normaliseDomain(domain)
-  return cleanedDomain ? `https://${cleanedDomain}` : 'http://localhost:3000'
-}
-
-const siteUrl = normaliseSiteUrl(rawSiteUrl, rawDomain)
-const domain = normaliseDomain(rawDomain || siteUrl)
-
+const siteUrl = publicSiteUrl(process.env.NEXT_PUBLIC_SITE_URL?.trim() || process.env.NEXT_PUBLIC_SITE_DOMAIN?.trim() || '')
+const rawPhone = process.env.NEXT_PUBLIC_BUSINESS_PHONE?.trim() || ''
+const rawEmail = process.env.NEXT_PUBLIC_BUSINESS_EMAIL?.trim() || ''
+const rawWhatsApp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.trim() || ''
+const phone = !unresolved(rawPhone) && /^\+?[\d\s()-]{10,20}$/.test(rawPhone) ? rawPhone : '[PHONE]'
+const email = !unresolved(rawEmail) && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail) ? rawEmail : '[EMAIL]'
+const whatsappNumber = !unresolved(rawWhatsApp) && /^\d{10,15}$/.test(rawWhatsApp) ? rawWhatsApp : ''
 export const businessProfile = {
-  businessName: rawBusinessName,
-  tradingName: rawTradingName,
-  shortName: process.env.NEXT_PUBLIC_SHORT_NAME?.trim() || rawBusinessName,
-  domain,
-  siteUrl,
-  email: process.env.NEXT_PUBLIC_BUSINESS_EMAIL?.trim() || 'hello@example.com',
-  phone: process.env.NEXT_PUBLIC_BUSINESS_PHONE?.trim() || 'Phone TBC',
-  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.trim() || '447700000000',
+  businessName: brand,
+  tradingName: brand,
+  shortName: brand,
+  seoName: `${brand} Cleaning`,
+  domain: siteUrl ? new URL(siteUrl).hostname : '[BRAND_DOMAIN]',
+  siteUrl, email, phone, whatsappNumber,
+  phoneHref: phone === '[PHONE]' ? undefined : `tel:${phone.replace(/[^+\d]/g, '')}`,
+  emailHref: email === '[EMAIL]' ? undefined : `mailto:${email}`,
+  whatsappHref: whatsappNumber ? `https://wa.me/${whatsappNumber}` : undefined,
   location: 'Brighton & Hove',
-  serviceArea: 'Brighton, Hove and nearby areas',
+  serviceArea: 'Brighton & Hove',
   country: 'UK',
-  isProductionConfigured: Boolean(
-    process.env.NEXT_PUBLIC_SITE_URL &&
-    process.env.NEXT_PUBLIC_BUSINESS_NAME &&
-    process.env.NEXT_PUBLIC_BUSINESS_EMAIL &&
-    process.env.NEXT_PUBLIC_BUSINESS_PHONE
-  ),
+  // Domain configuration alone is not proof of end-to-end intake acceptance.
+  isIndexable: Boolean(siteUrl && process.env.NEXT_PUBLIC_SITE_INDEXABLE === 'true'),
 }
-
 export const serviceAreaPostcodes = ['BN1', 'BN2', 'BN3', 'BN41']
