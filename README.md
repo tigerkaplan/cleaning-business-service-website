@@ -60,3 +60,18 @@ Next.js images and bottom-aligned service-card links.
 ## Relationship to the Operations Application
 
 The Website and Operations Application demonstrate complementary stages of the service journey. Automated end-to-end Website-to-Local-App intake synchronisation has not yet been verified.
+
+## Open the correct website preview
+
+Run these commands from `01_WEBSITE/cleaning-business-service-website-git`:
+
+```powershell
+npm run build
+npm run preview:website
+```
+
+Open **http://127.0.0.1:3001/**. Stop any older website preview using that port first.
+Port 3000 belongs to the separate local app. Starting `npm run dev` from the
+preserved `01_WEBSITE/06_CODE` serves its old icon-only homepage and SVG hero;
+it does not serve this repository's photographs. GitHub pushes do not switch
+an already running local server to a different folder.

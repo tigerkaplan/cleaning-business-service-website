@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "preview:website": "next start --hostname 127.0.0.1 --port 3001",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/**/*.test.cjs",
     "test:placeholders": "node scripts/check-placeholders.cjs",
