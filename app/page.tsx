@@ -48,7 +48,7 @@ const services: Array<{ title: string; href: string; desc: string; icon: Service
     href: '/office-cleaning',
     desc: 'Clean and safe environments you can trust.',
     icon: 'clinic',
-    image: '/images/clinic-local-organisation-cleaning.png',
+    image: '/images/clinic-local-cleaning.png',
     alt: 'Cleaner wiping a clinic reception desk',
   },
   {

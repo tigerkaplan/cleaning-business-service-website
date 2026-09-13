@@ -10,7 +10,7 @@ for (const width of [320, 375, 390, 430, 768, 1440]) {
     const heroRatio = await hero.evaluate((img: HTMLImageElement) => img.clientWidth / img.clientHeight)
     expect(Math.abs(heroRatio - 1672 / 940)).toBeLessThan(0.02)
     await expect(hero).toHaveAttribute('src', /brightshore-cleaning-homepage-hero/ )
-    const expectedImages = ['end-of-tenancy-cleaning', 'airbnb-short-let-cleaning', 'office-commercial-cleaning', 'gym-studio-cleaning', 'clinic-local-organisation-cleaning', 'domestic-deep-cleaning']
+    const expectedImages = ['end-of-tenancy-cleaning', 'airbnb-short-let-cleaning', 'office-commercial-cleaning', 'gym-studio-cleaning', 'clinic-local-cleaning', 'domestic-deep-cleaning']
     const cards = page.locator('.service-card')
     await expect(cards).toHaveCount(6)
     for (const [index, card] of (await cards.all()).entries()) {
