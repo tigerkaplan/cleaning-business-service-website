@@ -2,6 +2,15 @@ import { createClient } from '@supabase/supabase-js'
 
 type WebsiteIntakeMode = 'TEST' | 'PRODUCTION'
 
+export function getWebsiteIntakeRuntimeDiagnostic(environment: NodeJS.ProcessEnv = process.env) {
+  return {
+    mode: String(environment.WEBSITE_INTAKE_MODE || ''),
+    approved: String(environment.WEBSITE_INTAKE_PRODUCTION_APPROVED || ''),
+    hasProductionUrl: Boolean(environment.SUPABASE_PRODUCTION_URL?.trim()),
+    hasProductionSecret: Boolean(environment.SUPABASE_PRODUCTION_SECRET_KEY?.trim()),
+  }
+}
+
 export function resolveSupabaseServerConfiguration(environment: NodeJS.ProcessEnv = process.env) {
   const mode = String(environment.WEBSITE_INTAKE_MODE || '').trim().toUpperCase() as WebsiteIntakeMode
   if (!['TEST', 'PRODUCTION'].includes(mode)) {

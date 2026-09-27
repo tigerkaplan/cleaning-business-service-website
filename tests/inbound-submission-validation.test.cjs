@@ -35,7 +35,10 @@ const { validateQuoteRequest: validate, QUOTE_REQUEST_LIMITS } = loadTypeScriptM
   path.join(root, 'lib/inbound-submission-validation.ts'),
 )
 const { processQuoteRequest } = loadTypeScriptModule(path.join(root, 'lib/quote-request-processing.ts'))
-const { resolveSupabaseServerConfiguration } = loadTypeScriptModule(path.join(root, 'lib/supabase-server.ts'))
+const {
+  getWebsiteIntakeRuntimeDiagnostic,
+  resolveSupabaseServerConfiguration,
+} = loadTypeScriptModule(path.join(root, 'lib/supabase-server.ts'))
 
 const validPayload = {
   name: 'Casey Example',
@@ -127,6 +130,24 @@ test('Website Supabase configuration separates TEST and PRODUCTION and fails clo
   })
   assert.deepEqual({mode:productionConfig.mode,projectRef:productionConfig.projectRef,url:productionConfig.url}, {mode:'PRODUCTION',projectRef:'production-example',url:'https://production-example.supabase.co'})
   assert.doesNotMatch(supabaseServerSource, /NEXT_PUBLIC_SUPABASE|SUPABASE_SERVICE_ROLE_KEY/)
+})
+
+test('Website runtime diagnostic reports presence without exposing Supabase values', () => {
+  const diagnostic = getWebsiteIntakeRuntimeDiagnostic({
+    WEBSITE_INTAKE_MODE: 'PRODUCTION',
+    WEBSITE_INTAKE_PRODUCTION_APPROVED: 'true',
+    SUPABASE_PRODUCTION_URL: 'https://production-example.supabase.co',
+    SUPABASE_PRODUCTION_SECRET_KEY: 'never-log-this-secret',
+  })
+
+  assert.deepEqual(diagnostic, {
+    mode: 'PRODUCTION',
+    approved: 'true',
+    hasProductionUrl: true,
+    hasProductionSecret: true,
+  })
+  assert.doesNotMatch(JSON.stringify(diagnostic), /production-example|never-log-this-secret/)
+  assert.match(apiSource, /getWebsiteIntakeRuntimeDiagnostic\(\)/)
 })
 
 test('required fields, email, phone, UK postcode, consent and normalisation use the real validator', () => {

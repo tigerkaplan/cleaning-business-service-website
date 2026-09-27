@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createSupabaseServerClient } from '@/lib/supabase-server'
+import { createSupabaseServerClient, getWebsiteIntakeRuntimeDiagnostic } from '@/lib/supabase-server'
 import { processQuoteRequest } from '@/lib/quote-request-processing'
 
 const WINDOW_MS = 15 * 60 * 1000
@@ -24,6 +24,9 @@ function isRateLimited(key: string) {
 }
 
 export async function POST(request: Request) {
+  // TEMPORARY: boolean-only production runtime evidence for final intake acceptance.
+  console.info('Website intake runtime environment', getWebsiteIntakeRuntimeDiagnostic())
+
   const ip = getClientIp(request)
   if (isRateLimited(ip)) {
     return NextResponse.json(
