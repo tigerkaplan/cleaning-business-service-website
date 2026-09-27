@@ -18,7 +18,7 @@ export const QUOTE_REQUEST_LIMITS = {
   email: 160,
   postcode: 12,
   property_type: 80,
-  preferred_date: 30,
+  preferred_date: 10,
   parking_access: 300,
   photo_url: 500,
   message: 1500,
@@ -50,6 +50,22 @@ function limit(value: string | null, max: number): string | null {
 
 function exceeds(value: unknown, max: number) {
   return asString(value).length > max
+}
+
+function isIsoDate(value: string) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) &&
+    Number.isFinite(Date.parse(value)) &&
+    new Date(value).toISOString().slice(0, 10) === value
+}
+
+function isSafePhotoUrl(value: string) {
+  if (/[\u0000-\u0020\u007f]/.test(value)) return false
+  try {
+    const url = new URL(value)
+    return ['http:', 'https:'].includes(url.protocol) && !url.username && !url.password
+  } catch {
+    return false
+  }
 }
 
 function parseCount(value: unknown, max: number): number | null {
@@ -141,16 +157,20 @@ export function validateQuoteRequest(input: unknown): ValidationResult {
     errors.property_type = `Property type must be ${QUOTE_REQUEST_LIMITS.property_type} characters or fewer.`
   }
 
-  if (exceeds(data.preferred_date, QUOTE_REQUEST_LIMITS.preferred_date)) {
-    errors.preferred_date = `Preferred date must be ${QUOTE_REQUEST_LIMITS.preferred_date} characters or fewer.`
+  const preferredDate = cleanOptional(data.preferred_date)
+  if (preferredDate && !isIsoDate(preferredDate)) {
+    errors.preferred_date = 'Preferred date must be a valid date.'
   }
 
   if (exceeds(data.parking_access ?? data.access_notes, QUOTE_REQUEST_LIMITS.parking_access)) {
     errors.parking_access = `Access notes must be ${QUOTE_REQUEST_LIMITS.parking_access} characters or fewer.`
   }
 
+  const suppliedPhotoUrl = cleanOptional(data.photo_url ?? data.photo_link)
   if (exceeds(data.photo_url ?? data.photo_link, QUOTE_REQUEST_LIMITS.photo_url)) {
     errors.photo_url = `Photo link must be ${QUOTE_REQUEST_LIMITS.photo_url} characters or fewer.`
+  } else if (suppliedPhotoUrl && !isSafePhotoUrl(suppliedPhotoUrl)) {
+    errors.photo_url = 'Photo link must be a valid HTTP or HTTPS URL.'
   }
 
   if (exceeds(data.message, QUOTE_REQUEST_LIMITS.message)) {
@@ -179,7 +199,7 @@ export function validateQuoteRequest(input: unknown): ValidationResult {
       property_type: limit(cleanOptional(data.property_type), QUOTE_REQUEST_LIMITS.property_type),
       bedrooms,
       bathrooms,
-      preferred_date: limit(cleanOptional(data.preferred_date), QUOTE_REQUEST_LIMITS.preferred_date),
+      preferred_date: preferredDate,
 
       access_notes: limit(cleanOptional(data.parking_access ?? data.access_notes), QUOTE_REQUEST_LIMITS.parking_access),
       customer_photos: photoUrl ? 'Received' : 'Requested',
@@ -187,10 +207,7 @@ export function validateQuoteRequest(input: unknown): ValidationResult {
       message: limit(cleanOptional(data.message), QUOTE_REQUEST_LIMITS.message),
       consent: true,
 
-      raw_message: {
-        ...data,
-        photo_url: photoUrl,
-      },
+      raw_message: photoUrl ? { photo_url: photoUrl } : {},
     },
   }
 }

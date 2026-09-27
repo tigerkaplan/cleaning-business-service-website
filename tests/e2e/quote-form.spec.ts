@@ -136,6 +136,21 @@ test('unconfirmed successful HTTP response preserves the enquiry', async ({ page
   await expect(page.getByLabel('Full name')).toHaveValue('Example Browser Test')
 })
 
+test('server failure is truthful, preserves the enquiry and exposes no secret details', async ({ page }) => {
+  await page.route('**/api/quote-request', route => route.fulfill({
+    status: 500,
+    contentType: 'application/json',
+    body: JSON.stringify({ ok: false, code: 'PERSISTENCE_ERROR', message: 'We could not save your request. Please try again later.' }),
+  }))
+  await openContact(page)
+  await completeRequiredFields(page)
+  await page.getByRole('button', { name: 'Send quote request' }).click()
+  const alert = page.getByRole('alert').filter({ hasText: 'We could not send your request.' })
+  await expect(alert).toContainText('We could not save your request')
+  await expect(alert).not.toContainText(/SUPABASE|secret|service.role|stack/i)
+  await expect(page.getByLabel('Full name')).toHaveValue('Example Browser Test')
+})
+
 test('keyboard operation reaches urgency controls and the submit button', async ({ page }) => {
   await openContact(page)
 

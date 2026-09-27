@@ -12,6 +12,7 @@ const formSource = fs.readFileSync(path.join(root, 'components/QuoteForm.tsx'), 
 const schemaSource = fs.readFileSync(path.join(root, 'supabase/inbound_submissions.sql'), 'utf8')
 const apiSource = fs.readFileSync(path.join(root, 'app/api/quote-request/route.ts'), 'utf8')
 const processingSource = fs.readFileSync(path.join(root, 'lib/quote-request-processing.ts'), 'utf8')
+const supabaseServerSource = fs.readFileSync(path.join(root, 'lib/supabase-server.ts'), 'utf8')
 
 function loadTypeScriptModule(filePath) {
   const previousLoader = Module._extensions['.ts']
@@ -34,6 +35,7 @@ const { validateQuoteRequest: validate, QUOTE_REQUEST_LIMITS } = loadTypeScriptM
   path.join(root, 'lib/inbound-submission-validation.ts'),
 )
 const { processQuoteRequest } = loadTypeScriptModule(path.join(root, 'lib/quote-request-processing.ts'))
+const { resolveSupabaseServerConfiguration } = loadTypeScriptModule(path.join(root, 'lib/supabase-server.ts'))
 
 const validPayload = {
   name: 'Casey Example',
@@ -74,6 +76,57 @@ test('photo_url is stored when provided and sets photos to Received', () => {
   const result = validate({ ...validPayload, photo_url: 'https://example.test/photos' })
   assert.equal(result.ok, true)
   assert.equal(result.payload.customer_photos, 'Received')
+  assert.deepEqual(result.payload.raw_message, { photo_url: 'https://example.test/photos' })
+
+  const withoutPhoto = validate(validPayload)
+  assert.equal(withoutPhoto.ok, true)
+  assert.equal(withoutPhoto.payload.customer_photos, 'Requested')
+  assert.deepEqual(withoutPhoto.payload.raw_message, {})
+})
+
+test('preferred date and photo metadata match the Local App contract', () => {
+  const accepted = validate({ ...validPayload, preferred_date: '2026-10-02', photo_url: 'https://example.test/photos' })
+  assert.equal(accepted.ok, true)
+  assert.equal(accepted.payload.preferred_date, '2026-10-02')
+  assert.deepEqual(accepted.payload.raw_message, { photo_url: 'https://example.test/photos' })
+  assert.deepEqual(Object.keys(accepted.payload.raw_message), ['photo_url'])
+
+  const invalidDate = validate({ ...validPayload, preferred_date: '02/10/2026' })
+  assert.equal(invalidDate.ok, false)
+  assert.match(invalidDate.errors.preferred_date, /valid date/)
+
+  const invalidPhoto = validate({ ...validPayload, photo_url: 'javascript:alert(1)' })
+  assert.equal(invalidPhoto.ok, false)
+  assert.match(invalidPhoto.errors.photo_url, /HTTP or HTTPS/)
+})
+
+test('Website Supabase configuration separates TEST and PRODUCTION and fails closed', () => {
+  assert.throws(() => resolveSupabaseServerConfiguration({}), /explicitly configured/)
+  assert.throws(() => resolveSupabaseServerConfiguration({
+    WEBSITE_INTAKE_MODE:'PRODUCTION',
+    SUPABASE_PRODUCTION_URL:'https://production-example.supabase.co',
+    SUPABASE_PRODUCTION_SECRET_KEY:'secret',
+  }), /not explicitly approved/)
+
+  const testConfig = resolveSupabaseServerConfiguration({
+    WEBSITE_INTAKE_MODE:'TEST',
+    SUPABASE_TEST_URL:'https://test-example.supabase.co',
+    SUPABASE_TEST_SECRET_KEY:'test-secret',
+    SUPABASE_PRODUCTION_URL:'https://wrong-production.supabase.co',
+    SUPABASE_PRODUCTION_SECRET_KEY:'wrong-production-secret',
+  })
+  assert.deepEqual({mode:testConfig.mode,projectRef:testConfig.projectRef,url:testConfig.url}, {mode:'TEST',projectRef:'test-example',url:'https://test-example.supabase.co'})
+
+  const productionConfig = resolveSupabaseServerConfiguration({
+    WEBSITE_INTAKE_MODE:'PRODUCTION',
+    WEBSITE_INTAKE_PRODUCTION_APPROVED:'true',
+    SUPABASE_PRODUCTION_URL:'https://production-example.supabase.co',
+    SUPABASE_PRODUCTION_SECRET_KEY:'production-secret',
+    SUPABASE_TEST_URL:'https://wrong-test.supabase.co',
+    SUPABASE_TEST_SECRET_KEY:'wrong-test-secret',
+  })
+  assert.deepEqual({mode:productionConfig.mode,projectRef:productionConfig.projectRef,url:productionConfig.url}, {mode:'PRODUCTION',projectRef:'production-example',url:'https://production-example.supabase.co'})
+  assert.doesNotMatch(supabaseServerSource, /NEXT_PUBLIC_SUPABASE|SUPABASE_SERVICE_ROLE_KEY/)
 })
 
 test('required fields, email, phone, UK postcode, consent and normalisation use the real validator', () => {

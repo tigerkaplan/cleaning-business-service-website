@@ -27,6 +27,8 @@ npm run dev
 
 Environment values are local-only. Use placeholder values in example files and never commit credentials.
 
+Website intake requires explicit server-only configuration: `WEBSITE_INTAKE_MODE=TEST` with TEST URL/secret values, or `WEBSITE_INTAKE_MODE=PRODUCTION`, explicit production approval, and separate production URL/secret values. No Supabase secret belongs in a `NEXT_PUBLIC_` variable.
+
 ## Verification
 
 ```powershell
@@ -41,29 +43,29 @@ The browser checks use fictional mocked submissions and do not submit data to a 
 
 ## Current working copy
 
-The Git-backed local runtime is `01_WEBSITE/cleaning-business-service-website-git`.
-The previous `01_WEBSITE/06_CODE` remains preserved. Project controls remain solely
-in `01_WEBSITE/00_CONTROL`.
+The authoritative runtime is `01_WEBSITE/06_CODE`. Project controls remain solely
+in `01_WEBSITE/00_CONTROL`. The empty `cleaning-business-service-website-git`
+directory is not the active Website source.
 
 The homepage uses the seven supplied PNG assets in `public/images`, with responsive
 Next.js images and bottom-aligned service-card links.
 
 ## Current limitations
 
-- This repository does not represent a deployed service. Indexing remains disabled.
-- Phone, email, domain, privacy/ICO decisions and production intake acceptance remain unresolved.
-- GitHub intake types, validation and persistence are preserved; differences from the previous local intake require a separate reconciliation before using its earlier live acceptance evidence.
+- The Website is deployed at `https://cleaning-business-service.netlify.app`; indexing remains disabled until the final domain and launch decision.
+- Phone, email, custom domain and privacy/ICO decisions remain unresolved.
+- Production intake is fail-closed unless the four server-only production variables documented above are present in the Netlify Production deploy context. Live acceptance remains separate from code release.
 - A verified public origin is still required before adding absolute canonical URLs, absolute sitemap or robots URLs, URL-based structured-data URLs, and social-sharing metadata.
 - Automated checks do not replace manual release accessibility checks, production form smoke testing, performance review or search-engine validation.
 - Only fictional or demo data belongs in demonstrations and tests.
 
 ## Relationship to the Operations Application
 
-The Website and Operations Application demonstrate complementary stages of the service journey. Automated end-to-end Website-to-Local-App intake synchronisation has not yet been verified.
+The Website writes validated enquiries to Supabase `public.inbound_submissions`; the Local App imports each stable remote UUID once into local SQLite. TEST end-to-end intake and isolated production acceptance are verified. Supabase remains intake/history, not the operational business database.
 
 ## Open the correct website preview
 
-Run these commands from `01_WEBSITE/cleaning-business-service-website-git`:
+Run these commands from `01_WEBSITE/06_CODE`:
 
 ```powershell
 npm run build
@@ -71,7 +73,5 @@ npm run preview:website
 ```
 
 Open **http://127.0.0.1:3001/**. Stop any older website preview using that port first.
-Port 3000 belongs to the separate local app. Starting `npm run dev` from the
-preserved `01_WEBSITE/06_CODE` serves its old icon-only homepage and SVG hero;
-it does not serve this repository's photographs. GitHub pushes do not switch
-an already running local server to a different folder.
+Port 3000 belongs to the separate local app. The production Website preview uses
+port 3001. Stop an older process on that port before starting a new preview.
